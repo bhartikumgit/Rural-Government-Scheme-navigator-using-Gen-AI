@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Eligible Schemes — Rural Scheme Navigator</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root { --saffron: #FF9933; --green: #138808; --navy: #000080; }
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f5f7fa; }
+
+    .site-header {
+      background: linear-gradient(90deg, var(--navy) 0%, #1a237e 100%);
+      border-bottom: 4px solid var(--saffron);
+    }
+    .flag-strip {
+      height: 5px;
+      background: linear-gradient(90deg,
+        var(--saffron) 33.3%, #fff 33.3%, #fff 66.6%, var(--green) 66.6%);
+    }
+    .header-inner {
+      display: flex; align-items: center;
+      justify-content: space-between; padding: 14px 32px;
+    }
+    .header-inner h1 { color:#fff; font-size:1.2rem; font-weight:700; margin:0; }
+    .btn-back {
+      background: rgba(255,255,255,0.12); color:#fff;
+      border: 1px solid rgba(255,255,255,0.25); border-radius:8px;
+      padding:7px 16px; font-size:0.82rem; font-weight:500;
+      text-decoration:none; transition:background 0.2s;
+    }
+    .btn-back:hover { background:rgba(255,255,255,0.2); color:#fff; }
+
+    .summary-bar {
+      background: linear-gradient(135deg, var(--navy) 0%, #283593 100%);
+      color:#fff; padding:28px 32px;
+    }
+    .summary-bar h2 { font-size:1.35rem; font-weight:700; margin-bottom:6px; }
+    .summary-bar p  { opacity:0.8; font-size:0.88rem; margin:0; }
+
+    .profile-pills { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+    .profile-pill {
+      background:rgba(255,255,255,0.12);
+      border:1px solid rgba(255,255,255,0.2);
+      border-radius:20px; padding:4px 12px;
+      font-size:0.75rem; font-weight:500;
+    }
+
+    .lang-toggle-bar {
+      background: rgba(255,255,255,0.08);
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding: 12px 32px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .btn-lang {
+      background: #ffffff;
+      color: #000080;
+      border: 2px solid #ffffff;
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-lang:hover { background: rgba(255,255,255,0.25); }
+    .btn-lang.active {
+      background: var(--saffron);
+      border-color: var(--saffron);
+      color: #000;
+    }
+    .lang-note { color: rgba(255,255,255,0.6); font-size:0.75rem; }
+
+    .scheme-card {
+      background:#fff; border-radius:16px;
+      box-shadow:0 2px 16px rgba(0,0,0,0.06);
+      margin-bottom:20px; overflow:hidden;
+      transition:box-shadow 0.2s;
+    }
+    .scheme-card:hover { box-shadow:0 6px 28px rgba(0,0,0,0.1); }
+
+    .card-header-bar {
+      padding:18px 24px 14px; border-bottom:1px solid #f0f0f0;
+      display:flex; align-items:flex-start; gap:14px;
+    }
+    .category-icon {
+      width:44px; height:44px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.3rem; flex-shrink:0;
+    }
+    .scheme-name { font-size:1rem; font-weight:700; color:#111; margin-bottom:4px; }
+    .scheme-meta { display:flex; flex-wrap:wrap; gap:6px; }
+
+    .badge-ministry {
+      background:#f0f4ff; color:var(--navy);
+      border-radius:6px; padding:2px 8px; font-size:0.72rem; font-weight:600;
+    }
+    .badge-state {
+      background:#f0faf0; color:var(--green);
+      border-radius:6px; padding:2px 8px; font-size:0.72rem; font-weight:600;
+    }
+    .badge-confidence { border-radius:6px; padding:2px 8px; font-size:0.72rem; font-weight:700; }
+    .conf-HIGH   { background:#e8f5e9; color:#2e7d32; }
+    .conf-MEDIUM { background:#fff8e1; color:#f57f17; }
+    .conf-LOW    { background:#fce4ec; color:#c62828; }
+
+    .card-body-area { padding:20px 24px; }
+
+    .benefit-highlight {
+      background:linear-gradient(135deg,#fff8e1 0%,#fff3e0 100%);
+      border:1px solid #ffe0b2; border-radius:12px;
+      padding:14px 18px; margin-bottom:18px;
+      display:flex; align-items:center; gap:12px;
+    }
+    .benefit-highlight .amount { font-size:1.15rem; font-weight:700; color:#e65100; }
+    .benefit-highlight .label  { font-size:0.75rem; color:#bf360c; margin-top:2px; }
+
+    .card-section-title {
+      font-size:0.72rem; font-weight:700; letter-spacing:1px;
+      text-transform:uppercase; color:#aaa;
+      margin-bottom:10px; margin-top:18px;
+    }
+
+    .reason-item {
+      display:flex; align-items:flex-start; gap:8px;
+      margin-bottom:6px; font-size:0.85rem; color:#333;
+    }
+    .dot {
+      width:18px; height:18px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.65rem; flex-shrink:0; margin-top:1px;
+    }
+    .dot-ok   { background:#e8f5e9; color:#2e7d32; }
+    .dot-warn { background:#fff8e1; color:#f57f17; }
+
+    .doc-list { list-style:none; padding:0; margin:0; }
+    .doc-list li {
+      display:flex; align-items:center; gap:8px;
+      padding:7px 0; border-bottom:1px solid #f5f5f5;
+      font-size:0.85rem; color:#444;
+    }
+    .doc-list li:last-child { border-bottom:none; }
+    .doc-list li::before { content:'📄'; font-size:0.85rem; }
+
+    .step-list { list-style:none; padding:0; margin:0; }
+    .step-list li {
+      display:flex; gap:12px; padding:8px 0;
+      border-bottom:1px solid #f5f5f5;
+      font-size:0.85rem; color:#444;
+    }
+    .step-list li:last-child { border-bottom:none; }
+    .step-num {
+      width:22px; height:22px; background:var(--navy); color:#fff;
+      border-radius:50%; display:flex; align-items:center;
+      justify-content:center; font-size:0.7rem; font-weight:700;
+      flex-shrink:0; margin-top:1px;
+    }
+
+    .btn-apply {
+      display:inline-block;
+      background:linear-gradient(135deg, var(--green) 0%, #1b5e20 100%);
+      color:#fff; border-radius:10px; padding:11px 24px;
+      font-size:0.88rem; font-weight:600; text-decoration:none;
+      transition:transform 0.15s, box-shadow 0.15s; margin-top:16px;
+    }
+    .btn-apply:hover {
+      transform:translateY(-1px);
+      box-shadow:0 6px 18px rgba(19,136,8,0.3); color:#fff;
+    }
+
+    .warning-box {
+      background:#fff8e1; border:1px solid #ffe082;
+      border-radius:10px; padding:10px 14px;
+      font-size:0.82rem; color:#6d4c00; margin-top:10px;
+    }
+
+    .sidebar-card {
+      background:#fff; border-radius:16px; padding:20px;
+      box-shadow:0 2px 16px rgba(0,0,0,0.06); margin-bottom:20px;
+    }
+    .sidebar-title {
+      font-size:0.72rem; font-weight:700; letter-spacing:1px;
+      text-transform:uppercase; color:#aaa; margin-bottom:14px;
+    }
+    .sidebar-card p { font-size:0.83rem; color:#555; line-height:1.7; margin-bottom:8px; }
+    .sidebar-card div { font-size:0.83rem; color:#555; line-height:1.8; }
+
+    footer { text-align:center; padding:24px; color:#bbb; font-size:0.76rem; margin-top:20px; }
+
+    /* Hindi font support */
+    .hi-text { font-family: 'Noto Sans Devanagari', 'Mangal', Arial, sans-serif; }
+
+    @media (max-width:576px) {
+      .summary-bar, .lang-toggle-bar { padding:20px 16px; }
+      .card-header-bar, .card-body-area { padding:16px; }
+    }
+  </style>
+  <!-- Devanagari font for better Hindi rendering -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="flag-strip"></div>
+  <div class="header-inner">
+    <h1>🇮🇳 Rural Scheme Navigator</h1>
+    <a href="/" class="btn-back">← New Search</a>
+  </div>
+</header>
+
+<!-- Summary bar -->
+<div class="summary-bar">
+  <div class="container">
+    <h2>
+      {% if response.schemes %}
+        ✅ {{ response.schemes|length }} scheme{% if response.schemes|length > 1 %}s{% endif %} found for you
+      {% else %}
+        No matching schemes found
+      {% endif %}
+    </h2>
+
+    <!-- Summary text — English and Hindi -->
+    <p class="en-text">{{ response.summary }}</p>
+    {% if response.summary_hi %}
+    <p class="hi-text" style="display:none">{{ response.summary_hi }}</p>
+    {% endif %}
+
+    <!-- Profile pills -->
+    <div class="profile-pills">
+      {% if profile.occupation %}<span class="profile-pill">💼 {{ profile.occupation }}</span>{% endif %}
+      {% if profile.state      %}<span class="profile-pill">📍 {{ profile.state }}</span>{% endif %}
+      {% if profile.age        %}<span class="profile-pill">🎂 Age {{ profile.age }}</span>{% endif %}
+      {% if profile.caste_category %}<span class="profile-pill">🏷️ {{ profile.caste_category }}</span>{% endif %}
+      {% if profile.gender     %}<span class="profile-pill">👤 {{ profile.gender }}</span>{% endif %}
+      {% if profile.annual_income %}<span class="profile-pill">💰 ₹{{ '{:,}'.format(profile.annual_income) }}/yr</span>{% endif %}
+      {% if profile.residence  %}<span class="profile-pill">🏡 {{ profile.residence }}</span>{% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Language toggle bar -->
+<div class="lang-toggle-bar">
+  <button class="btn-lang active" id="btnEn" onclick="setLang('en')">🇬🇧 English</button>
+  <button class="btn-lang" id="btnHi" onclick="setLang('hi')">🇮🇳 हिंदी</button>
+  <span class="lang-note">Scheme names and portal links remain in English</span>
+</div>
+
+<!-- Results -->
+<div class="container" style="margin-top:28px;">
+  <div class="row">
+    <div class="col-lg-8">
+
+      {% if response.no_results_msg %}
+      <div style="background:#fff; border-radius:16px; text-align:center; padding:60px 20px; box-shadow:0 2px 16px rgba(0,0,0,0.06);">
+        <div style="font-size:3rem;margin-bottom:16px">🔍</div>
+        <h3 style="color:#555">No schemes matched your profile</h3>
+        <p style="color:#999">{{ response.no_results_msg }}</p>
+        <a href="/" class="btn-apply" style="margin-top:12px">Try Again</a>
+      </div>
+
+      {% else %}
+      {% for scheme in response.schemes %}
+
+      {% set icons = {
+        'Agriculture': '🌾', 'Health': '🏥', 'Housing': '🏠',
+        'Employment': '💼', 'Education': '📚', 'Financial Assistance': '💳',
+        'Financial Inclusion': '🏦', 'Social Security': '🛡️',
+        'Social Welfare': '🤝', 'Skill Development': '🎓',
+        'Women and Child Development': '👩‍👧', 'Infrastructure': '🛣️',
+      } %}
+      {% set colors = {
+        'Agriculture': '#e8f5e9', 'Health': '#fce4ec', 'Housing': '#e3f2fd',
+        'Employment': '#f3e5f5', 'Education': '#e8eaf6',
+        'Financial Assistance': '#fff8e1', 'Financial Inclusion': '#e0f7fa',
+        'Social Security': '#e8f5e9', 'Social Welfare': '#fce4ec',
+        'Skill Development': '#f3e5f5', 'Women and Child Development': '#fce4ec',
+        'Infrastructure': '#e0f7fa',
+      } %}
+
+      <div class="scheme-card">
+        <div class="card-header-bar">
+          <div class="category-icon" style="background:{{ colors.get(scheme.category,'#f5f5f5') }}">
+            {{ icons.get(scheme.category,'📋') }}
+          </div>
+          <div style="flex:1">
+            <!-- Scheme name always in English -->
+            <div class="scheme-name">{{ scheme.scheme_name }}</div>
+            <div class="scheme-meta">
+              <span class="badge-ministry">{{ scheme.ministry[:40] }}{% if scheme.ministry|length > 40 %}...{% endif %}</span>
+              <span class="badge-state">{{ scheme.state }}</span>
+              <span class="badge-confidence conf-{{ scheme.confidence }}">{{ scheme.confidence }} confidence</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body-area">
+
+          <!-- Benefit amount — always English -->
+          {% if scheme.benefit_amount %}
+          <div class="benefit-highlight">
+            <div style="font-size:1.8rem">💰</div>
+            <div>
+              <div class="amount">{{ scheme.benefit_amount }}</div>
+              <div class="label en-text">Benefit / Assistance Amount</div>
+              <div class="label hi-text" style="display:none">लाभ / सहायता राशि</div>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Plain summary -->
+          <p style="font-size:0.88rem; color:#555; margin-bottom:0; line-height:1.6">
+            <span class="en-text">{{ scheme.plain_summary }}</span>
+            <span class="hi-text" style="display:none">
+              {{ scheme.plain_summary_hi if scheme.plain_summary_hi else scheme.plain_summary }}
+            </span>
+          </p>
+
+          <!-- Warnings -->
+          {% for i in range(scheme.warnings|length) %}
+          <div class="warning-box">
+            <span class="en-text">⚠️ {{ scheme.warnings[i] }}</span>
+            <span class="hi-text" style="display:none">
+              ⚠️ {{ scheme.warnings_hi[i] if scheme.warnings_hi is defined and scheme.warnings_hi|length > i else scheme.warnings[i] }}
+            </span>
+          </div>
+          {% endfor %}
+
+          <!-- Why eligible -->
+          <div class="card-section-title">
+            <span class="en-text">Why you are eligible</span>
+            <span class="hi-text" style="display:none">आप पात्र क्यों हैं</span>
+          </div>
+          <p style="font-size:0.85rem; color:#333">
+            <span class="en-text">{{ scheme.eligibility_explanation }}</span>
+            <span class="hi-text" style="display:none">
+              {{ scheme.eligibility_explanation_hi if scheme.eligibility_explanation_hi else scheme.eligibility_explanation }}
+            </span>
+          </p>
+
+          <!-- What you get -->
+          <div class="card-section-title">
+            <span class="en-text">What you get</span>
+            <span class="hi-text" style="display:none">आपको क्या मिलेगा</span>
+          </div>
+          <p style="font-size:0.85rem; color:#444; line-height:1.6">
+            <span class="en-text">{{ scheme.what_you_get }}</span>
+            <span class="hi-text" style="display:none">
+              {{ scheme.what_you_get_hi if scheme.what_you_get_hi else scheme.what_you_get }}
+            </span>
+          </p>
+
+          <!-- Documents needed -->
+          {% if scheme.documents_needed %}
+          <div class="card-section-title">
+            <span class="en-text">Documents you need</span>
+            <span class="hi-text" style="display:none">आवश्यक दस्तावेज़</span>
+          </div>
+          <ul class="doc-list">
+            {% for i in range(scheme.documents_needed|length) %}
+            <li>
+              <span class="en-text">{{ scheme.documents_needed[i] }}</span>
+              <span class="hi-text" style="display:none">
+                {{ scheme.documents_needed_hi[i] if scheme.documents_needed_hi is defined and scheme.documents_needed_hi|length > i else scheme.documents_needed[i] }}
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+
+          <!-- How to apply -->
+          {% if scheme.how_to_apply %}
+          <div class="card-section-title">
+            <span class="en-text">How to apply — step by step</span>
+            <span class="hi-text" style="display:none">आवेदन कैसे करें — चरण दर चरण</span>
+          </div>
+          <ul class="step-list">
+            {% for i in range(scheme.how_to_apply|length) %}
+            <li>
+              <div class="step-num">{{ i + 1 }}</div>
+              <span>
+                <span class="en-text">{{ scheme.how_to_apply[i] }}</span>
+                <span class="hi-text" style="display:none">
+                  {{ scheme.how_to_apply_hi[i] if scheme.how_to_apply_hi is defined and scheme.how_to_apply_hi|length > i else scheme.how_to_apply[i] }}
+                </span>
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+
+          <!-- Apply button — always English -->
+          {% if scheme.apply_url %}
+          <a href="{{ scheme.apply_url }}" target="_blank" class="btn-apply">
+            🔗 Apply at Official Portal →
+          </a>
+          <div style="font-size:0.72rem; color:#aaa; margin-top:6px">
+            <span class="en-text">ⓘ Opens official government portal. If you see a privacy warning, click Advanced → Proceed.</span>
+            <span class="hi-text" style="display:none">ⓘ आधिकारिक सरकारी पोर्टल खुलेगा। Privacy warning दिखे तो Advanced → Proceed पर क्लिक करें।</span>
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <div class="sidebar-card">
+        <div class="sidebar-title">
+          <span class="en-text">Quick Tips</span>
+          <span class="hi-text" style="display:none">महत्वपूर्ण सुझाव</span>
+        </div>
+        <div>
+          <p>
+            <span class="en-text">📌 <strong>Aadhaar is mandatory</strong> for almost all schemes. Make sure yours is active.</span>
+            <span class="hi-text" style="display:none">📌 <strong>आधार अनिवार्य है</strong> लगभग सभी योजनाओं के लिए। सुनिश्चित करें कि आपका आधार सक्रिय है।</span>
+          </p>
+          <p>
+            <span class="en-text">🏦 <strong>Bank account</strong> must be linked to Aadhaar for direct benefit transfer.</span>
+            <span class="hi-text" style="display:none">🏦 <strong>बैंक खाता</strong> आधार से जुड़ा होना चाहिए — सीधे लाभ हस्तांतरण के लिए।</span>
+          </p>
+          <p>
+            <span class="en-text">📋 Keep certified copies of caste certificate, income certificate, and land records ready.</span>
+            <span class="hi-text" style="display:none">📋 जाति प्रमाण पत्र, आय प्रमाण पत्र और भूमि अभिलेखों की प्रमाणित प्रतियां तैयार रखें।</span>
+          </p>
+          <p>
+            <span class="en-text">🏢 <strong>CSC (Common Service Centre)</strong> in your village can help you apply for most central schemes.</span>
+            <span class="hi-text" style="display:none">🏢 आपके गांव का <strong>CSC (Common Service Centre)</strong> अधिकांश केंद्रीय योजनाओं के लिए आवेदन में मदद कर सकता है।</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-title">
+          <span class="en-text">Useful Contacts</span>
+          <span class="hi-text" style="display:none">उपयोगी संपर्क</span>
+        </div>
+        <div>
+          <div>📞 <strong>PM-KISAN:</strong> 155261</div>
+          <div>📞 <strong>Ayushman Bharat:</strong> 14555</div>
+          <div>📞 <strong>MGNREGS:</strong> 1800-111-555</div>
+          <div>📞 <strong>Women Helpline:</strong> 181</div>
+          <div style="margin-top:10px">
+            🌐 <a href="https://myscheme.gov.in" target="_blank" style="color:var(--navy); font-weight:600">myscheme.gov.in</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span class="en-text">Data sourced from myscheme.gov.in · Not an official Government of India website · Built as an open-source AI portfolio project</span>
+  <span class="hi-text" style="display:none">डेटा myscheme.gov.in से लिया गया है · यह भारत सरकार की आधिकारिक वेबसाइट नहीं है · एक ओपन-सोर्स AI प्रोजेक्ट</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  let currentLang = 'en';
+
+  function setLang(lang) {
+    currentLang = lang;
+
+    // Toggle button styles
+    document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+    document.getElementById('btnHi').classList.toggle('active', lang === 'hi');
+
+    // Show/hide all en-text and hi-text elements
+    document.querySelectorAll('.en-text').forEach(el => {
+      el.style.display = lang === 'en' ? '' : 'none';
+    });
+    document.querySelectorAll('.hi-text').forEach(el => {
+      el.style.display = lang === 'hi' ? '' : 'none';
+    });
+
+    // Update page language attribute for screen readers
+    document.documentElement.lang = lang === 'hi' ? 'hi' : 'en';
+  }
+</script>
+</body>
+</html>

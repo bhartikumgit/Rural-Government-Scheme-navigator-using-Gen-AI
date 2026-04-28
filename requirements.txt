@@ -1,0 +1,15 @@
+requests
+beautifulsoup4
+lxml
+sentence-transformers
+faiss-cpu
+rank-bm25
+langchain
+langchain-community
+flask
+flask-cors
+transformers
+torch
+tqdm
+sentencepiece
+sacremoses
